@@ -1,0 +1,6 @@
+.posts{
+    display: flex;
+    columns: 2;
+    margin: 20px;
+    width: 1300px;
+}
