@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 function Singlepost() {
   const { blogId } = useParams();
   const [blog, setBlog] = useState(null);
-  const [comments, setComments] = useState("");
+  const [comments, setComments] = useState([]);
   const [input, setInput] = useState(false);
   const [text, setText] = useState("");
   const [editingComment, setEditingComment] = useState(null);
@@ -41,7 +41,7 @@ function Singlepost() {
 
   const handleDelete = async () => {
     try {
-      dispatch(deleteblog(blogId));
+       dispatch(deleteblog(blogId));
       toast.success("Blog post deleted successfully");
       navigate("/");
     } catch (error) {
@@ -51,8 +51,8 @@ function Singlepost() {
 
   const handleDeleteComment = async (id) => {
     try {
-       dispatch(deleteComment(id));
-      setComments(comments.filter((comment) => comment._id !== id));
+      await dispatch(deleteComment(id));
+      setComments(comments.filter(comment => comment._id !== id));
       toast.success("Comment deleted successfully");
     } catch (error) {
       toast.error(error);
@@ -75,10 +75,11 @@ function Singlepost() {
     if (commentLoading) return;
     try {
       if (editingComment) {
-        dispatch(updateComment({ id: editingComment._id, text }));
+       dispatch(updateComment({ id: editingComment._id, text }));
         toast.success("Comment updated successfully");
       } else {
-        dispatch(createComment({ text, blogId }));
+         dispatch(createComment({ text, blogId }));
+        setComments([...comments, { commenter: "You", text }]);
         toast.success("Comment submitted");
       }
       setInput(false);
@@ -155,8 +156,7 @@ function Singlepost() {
         )}
       </div>
       {comments.map((comment) => (
-      
-        <div className="container">
+        <div className="container" key={comment._id}>
           <div className="singlepostWrapper">
             <div className="singlePostEdit">
               <i
@@ -171,7 +171,6 @@ function Singlepost() {
             <p className="title">{comment.commenter}</p>
             <div className="description">
               <p>{comment.text}</p>
-              {console.log(comment)}
             </div>
           </div>
         </div>
